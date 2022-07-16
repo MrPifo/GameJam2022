@@ -1,0 +1,10 @@
+Mechanik:
+
+- Mario Kart ähnliches Spiel mit zerstörbaren Blöcken
+- Prozedual-Generierte Map mit unendlichen Streckenverlauf
+
+Spielziel:
+
+- So viele Münzen wie möglich einzusammeln
+- Unterschiedliche Wege nehmen
+- Das richtige Item würfeln
