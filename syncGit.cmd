@@ -1,4 +1,4 @@
-git add -A
+git pull
 git commit -a -m "Commit"
-git pull origin master --allow-unrelated-histories
+git push
 TIMEOUT 10
