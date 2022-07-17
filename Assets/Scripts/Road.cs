@@ -21,7 +21,7 @@ public class Road : MonoBehaviour {
 		transform.position = ancor;
 		transform.forward = -normal;
 
-		if (presetContainer.transform.childCount > 0) {
+		if (presetContainer.transform.childCount > 0) { //1
 			int rand = Random.Range(0, presetContainer.transform.childCount - 1);
 			presetContainer.transform.GetChild(rand).gameObject.SetActive(true);
 		}
