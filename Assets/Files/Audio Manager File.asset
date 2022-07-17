@@ -19,10 +19,14 @@ MonoBehaviour:
   directory:
   - Audio
   library:
+  - key: BombExplode
+    value: {fileID: 8300000, guid: b2c29973dd63ff54fbc93ee06e565c5a, type: 3}
   - key: Car_Crash
     value: {fileID: 8300000, guid: a4f60fd1004b8d04199eb46fe943072f, type: 3}
   - key: Coin_Collect
     value: {fileID: 8300000, guid: a05be8b477daff246a6663fc6a594c29, type: 3}
+  - key: Dice_Hit
+    value: {fileID: 8300000, guid: 34b8be61bca1e144bac5d01dab04fdd9, type: 3}
   - key: Dice_Roll
     value: {fileID: 8300000, guid: 14a89bc9d0b87974583abb06eaeece82, type: 3}
   - key: Grow

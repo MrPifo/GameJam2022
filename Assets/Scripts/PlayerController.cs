@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 	public AudioSource idleMotorSound;
 	public AudioSource activeMotorSound;
 	public Bomb bombPrefab;
+	public Text pressPrompt;
 	public List<WheelCollider> wheels;
 	public List<WheelCollider> frontWheels;
 	public new CameraController camera;
@@ -151,6 +152,11 @@ public class PlayerController : MonoBehaviour {
 
 		if(Input.GetButtonDown("Use") && hasItem) {
 			UseItem();
+		}
+		if (hasItem) {
+			pressPrompt.gameObject.SetActive(true);
+		} else {
+			pressPrompt.gameObject.SetActive(false);
 		}
 		if (lockItemCollection == false) {
 			if (UnityEngine.Input.GetKey(KeyCode.F1)) {
@@ -467,5 +473,11 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		return texture;
+	}
+
+	private void OnCollisionEnter(Collision collision) {
+		if(collision.impulse.magnitude > 20) {
+			Die();
+		}
 	}
 }
