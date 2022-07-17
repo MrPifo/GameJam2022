@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour {
 	public Transform meshContainer;
 	public Material ghostMaterial;
 	public Material boostPowerupMaterial;
+	public Material goldEffect;
 	public GameObject endScreen;
 	public Shell shellPrefab;
 	public Text coinCounter;
@@ -50,12 +51,17 @@ public class PlayerController : MonoBehaviour {
 	public bool isInvincible;
 	public bool lockItemCollection;
 
+	[Header("Particles")]
+	public GameObject BigExplosion;
+
 	[Header("Item Properties")]
 	public float boosterDuration;
 	public float bigDuration;
 	public float ghostDuration;
 	public int shellAmount;
 	public float shellThrowDelay;
+	public int coinGainAmount;
+	public float coinIntervall;
 
 	public Rigidbody Motor { get; private set; }
 	public Vector3 Position => Motor.position;
@@ -83,6 +89,7 @@ public class PlayerController : MonoBehaviour {
 		Motor.centerOfMass = massCenter;
 		ghostMaterial.SetFloat("_Fade", 0);
 		boostPowerupMaterial.SetFloat("_Fade", 0);
+		goldEffect.SetFloat("_Fade", 0);
 
 		FindObjectsOfType<WheelCollider>().ToList().ForEach(w => {
 			w.ConfigureVehicleSubsteps(5, 12, 15);
@@ -198,7 +205,7 @@ public class PlayerController : MonoBehaviour {
 				Shell();
 				break;
 			case CubeFace.Face_6:
-				Superstar();
+				FreeCoins();
 				break;
 		}
 
@@ -309,8 +316,25 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	void Superstar() {
+	void FreeCoins() {
+		StartCoroutine(IStart());
 
+		IEnumerator IStart() {
+			int amount = 0;
+			lockItemCollection = true;
+			isInvincible = true;
+			DOTween.To(() => goldEffect.GetFloat("_Fade"), x => goldEffect.SetFloat("_Fade", x), 1, 0.35f).SetEase(Ease.OutBounce);
+
+			while (amount < coinGainAmount) {
+				AddCoin(1, ((float)amount).Remap(0, coinGainAmount, 0.7f, 1.3f));
+				amount++;
+				yield return new WaitForSeconds(coinIntervall);
+			}
+
+			isInvincible = false;
+			lockItemCollection = false;
+			DOTween.To(() => goldEffect.GetFloat("_Fade"), x => goldEffect.SetFloat("_Fade", x), 0f, 0.35f).SetEase(Ease.OutBounce);
+		}
 	}
 
 	void MotorAudio() {
@@ -331,8 +355,7 @@ public class PlayerController : MonoBehaviour {
 				}
 
 				if (t.gameObject.GetComponent<Collider>() == null) {
-					MeshCollider coll = t.gameObject.AddComponent<MeshCollider>();
-					coll.convex = true;
+					BoxCollider coll = t.gameObject.AddComponent<BoxCollider>();
 				}
 
 				if (rig != null) {
@@ -343,6 +366,7 @@ public class PlayerController : MonoBehaviour {
 			activeMotorSound.Stop();
 			idleMotorSound.Stop();
 			endScreen.SetActive(true);
+			BigExplosion.Spawn(transform.position, 2);
 			AudioPlayer.Play("Car_Crash", 1f, 1f, 0.2f);
 		}
 	}
@@ -413,10 +437,15 @@ public class PlayerController : MonoBehaviour {
 		SceneManager.LoadScene("Main");
 	}
 
-	public void AddCoin(int amount) {
+	public void AddCoin(int amount, float pitch = 0) {
 		coins += amount;
 		coinCounter.text = coins + "";
-		AudioPlayer.Play("Coin_Collect", 0.8f, 1.2f, 0.6f);
+
+		if (pitch == 0) {
+			AudioPlayer.Play("Coin_Collect", 0.8f, 1.2f, 0.6f);
+		} else {
+			AudioPlayer.Play("Coin_Collect", pitch, pitch, 0.6f);
+		}
 	}
 
 	public static void ToTexture2D(RenderTexture rTex, Texture2D tex) {

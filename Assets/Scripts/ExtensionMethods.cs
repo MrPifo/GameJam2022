@@ -7,6 +7,7 @@ using System;
 using System.Reflection;
 using System.Linq;
 using UnityEngine.UI;
+using SimpleMan.CoroutineExtensions;
 
 namespace Sperlich.Extensions {
 	public static class ExtensionMethods {
@@ -213,6 +214,16 @@ namespace Sperlich.Extensions {
 			return objTarget;
 		}
 		public static Vector2 Vector2XZ(this Vector3 vec) => new Vector2(vec.x, vec.z);
+		public static GameObject Spawn(this GameObject _obj, Vector3 position, float deleteAfter = 0) {
+			var o = UnityEngine.Object.Instantiate(_obj, position, Quaternion.identity);
+
+			if(deleteAfter > 0) {
+				Helper.Delay(deleteAfter, () => {
+					UnityEngine.Object.Destroy(o);
+				});
+			}
+			return o;
+		}
 
 		// Helper for Coroutines
 		public sealed class ExtensionMethodHelper : MonoBehaviour { }

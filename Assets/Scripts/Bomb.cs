@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using SimpleMan.CoroutineExtensions;
+using Sperlich.Extensions;
 using UnityEngine;
 
 public class Bomb : MonoBehaviour {
@@ -7,13 +10,19 @@ public class Bomb : MonoBehaviour {
     public float throwDistance;
     public float throwHeight;
     public float explosionRadius;
+    public GameObject bigExplosion;
     private Rigidbody rig;
+    private AudioSource explodeSound;
     private Transform mesh;
     private bool disableCollision;
 
 	private void Awake() {
         rig = GetComponent<Rigidbody>();
+        explodeSound = GetComponent<AudioSource>();
         mesh = transform.GetChild(0);
+
+        mesh.localScale = Vector3.zero;
+        mesh.DOScale(1, 1f).SetEase(Ease.OutCirc);
 	}
 
 	private void Update() {
@@ -30,17 +39,26 @@ public class Bomb : MonoBehaviour {
 	}
 
     public void Explode() {
-        Collider[] colls = Physics.OverlapSphere(transform.position, explosionRadius);
+        if (disableCollision == false) {
+            disableCollision = true;
+            bigExplosion.Spawn(transform.position, 2);
+            Collider[] colls = Physics.OverlapSphere(transform.position, explosionRadius);
 
-        if (colls.Length > 0) {
-            foreach(var c in colls) {
-                if(c.TryGetComponent(out Obstacle obs)) {
-                    obs.DestroyWall(rig.position, rig.velocity.normalized);
-				}
-			}
+            if (colls.Length > 0) {
+                foreach (var c in colls) {
+                    if (c.TryGetComponent(out Obstacle obs)) {
+                        obs.DestroyWall(rig.position, rig.velocity.normalized);
+                    }
+                }
+            }
+
+            explodeSound.Play();
+            transform.GetChild(0).gameObject.SetActive(false);
+
+            this.Delay(2f, () => {
+                Destroy(gameObject);
+            });
         }
-
-        Destroy(gameObject);
     }
 
 

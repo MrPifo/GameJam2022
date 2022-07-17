@@ -12,9 +12,15 @@ public class Shell : MonoBehaviour {
 	public float torque;
 	public Vector3 dir;
 	private Rigidbody rig;
+	private AudioSource diceHit;
+	private bool lockHitSound;
+
+	private void Awake() {
+		rig = GetComponent<Rigidbody>();
+		diceHit = GetComponent<AudioSource>();
+	}
 
 	public void Throw(Vector3 from, Vector3 direction) {
-		rig = GetComponent<Rigidbody>();
 		transform.position = from;
 		dir = direction;
 		rig.AddForce(Vector3.up * initHeightForce);
@@ -32,5 +38,17 @@ public class Shell : MonoBehaviour {
 
 	public void Destroy() {
 		Destroy(gameObject);
+	}
+
+	private void OnCollisionEnter(Collision collision) {
+		if (lockHitSound == false) {
+			diceHit.Play();
+			diceHit.pitch = Random.Range(0.85f, 1.15f);
+			lockHitSound = true;
+
+			this.Delay(0.2f, () => lockHitSound = false); {
+
+			}
+		}
 	}
 }
