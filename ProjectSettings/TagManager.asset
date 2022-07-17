@@ -14,11 +14,11 @@ TagManager:
   - Vehicle
   - Road
   - Dice
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Obstacle
+  - Death
+  - Weapon
+  - Brick
   - 
   - 
   - 

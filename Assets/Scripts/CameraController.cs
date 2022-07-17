@@ -10,12 +10,15 @@ public class CameraController : MonoBehaviour {
 	public float followHeight;
 	public float focusSpeed;
 	public float xOffset;
+	public bool follow;
 
 	private void Awake() {
-		
+		follow = true;
 	}
 
 	void LateUpdate() {
+		if (follow == false) return;
+
 		Vector3 pos = player.Position;
 		pos += (player.Position - player.transform.position).normalized * -followDistance;
 		pos += new Vector3((player.camFocusPoint.position - transform.position).normalized.x * xOffset, followHeight, 0);

@@ -7,11 +7,31 @@ using System.Linq;
 public class Road : MonoBehaviour {
 
 	public RoadTypes type;
+	public List<ItemBox> items;
+	public GameObject presetContainer;
 	public List<Connection> PossibleConnections;
+
+	private void Awake() {
+		items = GetComponentsInChildren<ItemBox>().ToList();
+		foreach(Transform t in presetContainer.transform) {
+			t.gameObject.SetActive(false);
+		}
+	}
 
 	public void Initialize(Vector3 ancor, Vector3 normal) {
 		transform.position = ancor;
 		transform.forward = -normal;
+
+		if (presetContainer.transform.childCount > 1) {
+			int rand = Random.Range(0, presetContainer.transform.childCount - 1);
+			presetContainer.transform.GetChild(rand).gameObject.SetActive(true);
+		}
+	}
+
+	void RemoveObstacles() {
+		foreach(var item in items) {
+			Destroy(item.gameObject);
+		}
 	}
 
 	public void TriggerEntrance() {
